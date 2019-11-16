@@ -1,124 +1,48 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { MdShoppingCart } from 'react-icons/md';
+
+import { formatPrice } from '../../util/format';
+import api from '../../services/api';
 
 import { ProductList } from './styles';
 
-export default function Home() {
-  return (
-    <ProductList>
-      <li>
-        <img
-          src="https://static.netshoes.com.br/produtos/tenis-mizuno-wave-creation-waveknit-masculino/05/D16-3993-405/D16-3993-405_detalhe2.jpg?ims=326x"
-          alt="Tênis"
-        />
-        <strong>
-          Tênis Mizuno Wave Creation Waveknit Masculino - Marinho e Preto
-        </strong>
-        <span>R$ 749,99</span>
+export default class Home extends Component {
+  state = {
+    products: [],
+  };
 
-        <button type="button">
-          <div>
-            <MdShoppingCart size={16} color="#FFF" /> 3
-          </div>
+  async componentDidMount() {
+    const response = await api.get('products');
 
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
+    const data = response.data.map(product => ({
+      ...product, // copia todos os dados do produto
+      priceFormatted: formatPrice(product.price),
+    }));
 
-      <li>
-        <img
-          src="https://static.netshoes.com.br/produtos/tenis-mizuno-wave-creation-waveknit-masculino/05/D16-3993-405/D16-3993-405_detalhe2.jpg?ims=326x"
-          alt="Tênis"
-        />
-        <strong>
-          Tênis Mizuno Wave Creation Waveknit Masculino - Marinho e Preto
-        </strong>
-        <span>R$ 749,99</span>
+    this.setState({ products: data }); // passa a variavel que criou
+  }
 
-        <button type="button">
-          <div>
-            <MdShoppingCart size={16} color="#FFF" /> 3
-          </div>
+  render() {
+    const { products } = this.state;
 
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
+    return (
+      <ProductList>
+        {products.map(product => (
+          <li key={products.id}>
+            <img src={product.image} alt={product.title} />
+            <strong>{product.title}</strong>
+            <span>{product.priceFormatted}</span>
 
-      <li>
-        <img
-          src="https://static.netshoes.com.br/produtos/tenis-mizuno-wave-creation-waveknit-masculino/05/D16-3993-405/D16-3993-405_detalhe2.jpg?ims=326x"
-          alt="Tênis"
-        />
-        <strong>
-          Tênis Mizuno Wave Creation Waveknit Masculino - Marinho e Preto
-        </strong>
-        <span>R$ 749,99</span>
+            <button type="button">
+              <div>
+                <MdShoppingCart size={16} color="#FFF" /> 3
+              </div>
 
-        <button type="button">
-          <div>
-            <MdShoppingCart size={16} color="#FFF" /> 3
-          </div>
-
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
-
-      <li>
-        <img
-          src="https://static.netshoes.com.br/produtos/tenis-mizuno-wave-creation-waveknit-masculino/05/D16-3993-405/D16-3993-405_detalhe2.jpg?ims=326x"
-          alt="Tênis"
-        />
-        <strong>
-          Tênis Mizuno Wave Creation Waveknit Masculino - Marinho e Preto
-        </strong>
-        <span>R$ 749,99</span>
-
-        <button type="button">
-          <div>
-            <MdShoppingCart size={16} color="#FFF" /> 3
-          </div>
-
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
-
-      <li>
-        <img
-          src="https://static.netshoes.com.br/produtos/tenis-mizuno-wave-creation-waveknit-masculino/05/D16-3993-405/D16-3993-405_detalhe2.jpg?ims=326x"
-          alt="Tênis"
-        />
-        <strong>
-          Tênis Mizuno Wave Creation Waveknit Masculino - Marinho e Preto
-        </strong>
-        <span>R$ 749,99</span>
-
-        <button type="button">
-          <div>
-            <MdShoppingCart size={16} color="#FFF" /> 3
-          </div>
-
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
-
-      <li>
-        <img
-          src="https://static.netshoes.com.br/produtos/tenis-mizuno-wave-creation-waveknit-masculino/05/D16-3993-405/D16-3993-405_detalhe2.jpg?ims=326x"
-          alt="Tênis"
-        />
-        <strong>
-          Tênis Mizuno Wave Creation Waveknit Masculino - Marinho e Preto
-        </strong>
-        <span>R$ 749,99</span>
-
-        <button type="button">
-          <div>
-            <MdShoppingCart size={16} color="#FFF" /> 3
-          </div>
-
-          <span>ADICIONAR AO CARRINHO</span>
-        </button>
-      </li>
-    </ProductList>
-  );
+              <span>ADICIONAR AO CARRINHO</span>
+            </button>
+          </li>
+        ))}
+      </ProductList>
+    );
+  }
 }
