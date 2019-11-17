@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdShoppingCart } from 'react-icons/md';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -10,60 +10,48 @@ import * as CartActions from '../../store/modules/cart/actions';
 
 import { ProductList } from './styles';
 
-class Home extends Component {
-  state = {
-    products: [],
-  };
+function Home({ amount, addToCartRequest }) {
+  const [products, setProducts] = useState([]);
 
-  async componentDidMount() {
-    const response = await api.get('products');
+  useEffect(() => {
+    async function loadProducts() {
+      const response = await api.get('products');
 
-    const data = response.data.map(product => ({
-      ...product, // copia todos os dados do produto
-      priceFormatted: formatPrice(product.price), // aplica funcao de formataçaoa de datas
-    }));
+      const data = response.data.map(product => ({
+        ...product, // copia todos os dados do produto
+        priceFormatted: formatPrice(product.price), // aplica funcao de formataçaoa de datas
+      }));
 
-    this.setState({ products: data }); // passa a variavel que criou
-  }
+      setProducts(data);
+    }
 
-  handAddProduct = id => {
-    // dispatch serve para disparar action ao redux
-    // as actions diz ao reduz que quero fazer alteraçao ao estado
-    // adicionar, remover, modificar
-    const { addToCartRequest } = this.props;
+    loadProducts();
+  }, []);
 
-    // toda app tem q ter um TYPE
+  function handAddProduct(id) {
     addToCartRequest(id);
-  };
-
-  render() {
-    const { products } = this.state;
-    const { amount } = this.props;
-
-    return (
-      <ProductList>
-        {products.map(product => (
-          <li key={products.id}>
-            <img src={product.image} alt={product.title} />
-            <strong>{product.title}</strong>
-            <span>{product.priceFormatted}</span>
-
-            <button
-              type="button"
-              onClick={() => this.handAddProduct(product.id)}
-            >
-              <div>
-                <MdShoppingCart size={16} color="#FFF" />{' '}
-                {amount[product.id] || 0}
-              </div>
-
-              <span>ADICIONAR AO CARRINHO</span>
-            </button>
-          </li>
-        ))}
-      </ProductList>
-    );
   }
+
+  return (
+    <ProductList>
+      {products.map(product => (
+        <li key={products.id}>
+          <img src={product.image} alt={product.title} />
+          <strong>{product.title}</strong>
+          <span>{product.priceFormatted}</span>
+
+          <button type="button" onClick={() => handAddProduct(product.id)}>
+            <div>
+              <MdShoppingCart size={16} color="#FFF" />{' '}
+              {amount[product.id] || 0}
+            </div>
+
+            <span>ADICIONAR AO CARRINHO</span>
+          </button>
+        </li>
+      ))}
+    </ProductList>
+  );
 }
 
 // verifica quantos itens tem no carrinho e informa no canto do produto
