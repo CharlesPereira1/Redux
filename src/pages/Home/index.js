@@ -26,14 +26,14 @@ class Home extends Component {
     this.setState({ products: data }); // passa a variavel que criou
   }
 
-  handAddProduct = product => {
+  handAddProduct = id => {
     // dispatch serve para disparar action ao redux
     // as actions diz ao reduz que quero fazer alteraçao ao estado
     // adicionar, remover, modificar
-    const { addToCart } = this.props;
+    const { addToCartRequest } = this.props;
 
     // toda app tem q ter um TYPE
-    addToCart(product);
+    addToCartRequest(id);
   };
 
   render() {
@@ -48,7 +48,10 @@ class Home extends Component {
             <strong>{product.title}</strong>
             <span>{product.priceFormatted}</span>
 
-            <button type="button" onClick={() => this.handAddProduct(product)}>
+            <button
+              type="button"
+              onClick={() => this.handAddProduct(product.id)}
+            >
               <div>
                 <MdShoppingCart size={16} color="#FFF" />{' '}
                 {amount[product.id] || 0}
